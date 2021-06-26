@@ -14,6 +14,9 @@ import { TranslateService } from '../../core/translate/translate.service';
 // Note: This list was generated via the following Scheme on CogServer
 // (use-modules (opencog pln))            ;; Include NLP types.
 // (cog-get-all-subtypes 'UnorderedLink)  ;; Note: This cmd was added in Jan '18 per github.com/opencog/atomspace/pull/1516.
+//
+// XXX FIXME this list is obsolete and incorrect, it should be fetched
+// at runtime, because this list is not a static list!
 const defUnorderedLinktypes = [ 'AbsentLink', 'AndLink', 'CosenseLink', 'EqualLink', 'EquivalenceLink', 'ExtensionalEquivalenceLink',
                                 'ExtensionalSimilarityLink', 'IdenticalLink', 'IntensionalEquivalenceLink', 'IntensionalSimilarityLink',
                                 'JoinLink', 'LgOr', 'NotLink', 'OrLink', 'ParallelLink', 'SetLink', 'SimilarityLink',
