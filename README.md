@@ -4,6 +4,11 @@ The AtomSpace Explorer is a visualization tool for OpenCog data. Atoms are fetch
 
 ![AtomSpace Explorer](src/assets/img/AtomSpace-Explorer.jpg)
 
+## Prerequisites
+The AtomSpace explorer needs .. an AtomSpace to explore. It is accessed
+via a RESTful API, provided by
+[atomspace-restful](https://github.com/opencog/atomspace-restful).
+
 ## Install and Setup
 
 ``` bash
