@@ -1,0 +1,121 @@
+<!-- D3 Graph window with controls -->
+<div class="ui grid very padded ui-grid">
+  <div *ngIf="custom_style==='15col_red'" _ngcontent-c5="" class="one wide column padded">
+  </div>
+  <div [ngClass]="custom_style==='15col_red' ? 'fifteen wide column ui-columns' : 'sixteen wide column ui-columns'">
+    <div [ngClass]="custom_style==='15col_red' ? 'ui segment visualizer-screen-15col_red' : 'ui segment visualizer-screen'">
+      <div class="tools-div">
+        <div class="ui icon buttons tools-btn">
+          <button (click)="playSimulation()" class="active ui icon teal button" [attr.data-tooltip]="'Play-TT' | translate" data-position="bottom left">
+            <i class="icon play"></i>
+          </button>
+          <button (click)="pauseSimulation()" class="ui icon teal button" [attr.data-tooltip]="'Pause-TT' | translate" data-position="bottom center">
+            <i class="icon pause"></i>
+          </button>
+          <button (click)="restartSimulation()" class="ui icon teal button" [attr.data-tooltip]="'Restart-TT' | translate" data-position="bottom center">
+            <i class="icon refresh"></i>
+          </button>
+        </div>
+        <div class="ui icon buttons tools-btn">
+          <button (click)="zoomIn(1000)" class="ui icon teal button" [attr.data-tooltip]="'ZoomIn-TT' | translate" data-position="bottom center">
+            <i class="icon plus"></i>
+          </button>
+          <button (click)="zoomOut(1000)" class="ui icon teal button" [attr.data-tooltip]="'ZoomOut-TT' | translate" data-position="bottom center">
+            <i class="icon minus"></i>
+          </button>
+          <button (click)="zoomReset(1000)" class="ui icon teal button" [attr.data-tooltip]="'ZoomReset-TT' | translate" data-position="bottom center">
+            <i class="icon window restore"></i>
+          </button>
+        </div>
+        <div *ngIf="isSelectedNode" (window:mousedown)="onLoadFiltering($event)" class="button ui floating labeled icon dropdown teal tools-btn" id="filtermenu-btn" [attr.data-tooltip]="'Filter-TT' | translate" data-position="bottom center">
+          <i class="filter icon"></i>
+          <div class="default text" id="filtermenu-text">{{ 'Unfiltered' | translate }}</div>
+          <div class="menu" (click)="onClickFiltering($event)" id="filtermenu">
+          </div>
+        </div>
+        <button *ngIf="isDrilledNodes" (click)="showAll()" class="button ui teal tools-btn">
+					<span  [attr.data-tooltip]="'ShowAllData-TT' | translate" data-position="bottom center">{{ 'ShowAllData' | translate }}</span>
+				</button>
+        <br><br>
+        <div class="ui toggle checkbox detailed-tt-toggle" [attr.data-tooltip]="'DetailedTooltips-TT' | translate" data-position="bottom left">
+          <input type="checkbox" class="detailed-tt-toggle" name="detailedTooltips" (click)="toggleTooltips()">
+          <label>
+              <div [ngSwitch]="isDetailedTooltips">
+              <i *ngSwitchCase="false" class="icon large teal comment outline"></i>
+              <i *ngSwitchCase="true" class="icon large teal talk outline"></i>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div *ngIf="isSelectedNode" class="selected-node-properties">
+        <table class="ui celled striped table">
+          <thead>
+            <tr>
+              <th colspan="2">
+                  <span>{{ selectedNodeData.type }}</span>
+                  <i (click)="closeSelectedNodeProps()" class="ui basic circular right floated remove icon" id="selected-node-properties-close-btn"></i>
+              </th>
+            </tr>
+            <tr *ngIf="name !== ''">
+              <th colspan="2">
+                  <span>{{ selectedNodeData.name }}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="collapsing">
+                <span>{{ 'Handle' | translate }}</span>
+              </td>
+                <td>{{ selectedNodeData.id }}</td>
+            </tr>
+            <tr>
+              <td>
+                  <span>{{ 'Incoming' | translate }}</span>
+                </td>
+                <td>{{ selectedNodeData.incoming.join(', ') }}</td>
+              </tr>
+              <tr>
+                <td>
+                  <span>{{ 'Outgoing' | translate }}</span>
+                </td>
+                <td>{{ selectedNodeData.outgoing.join(', ') }}</td>
+              </tr>
+              <tr>
+                <td>
+                <span>LTI</span>
+              </td>
+                <td>{{ selectedNodeData.av.lti }}</td>
+            </tr>
+            <tr>
+              <td>
+                <span>STI</span>
+              </td>
+                <td>{{ selectedNodeData.av.sti }}</td>
+            </tr>
+            <tr>
+              <td>
+                <span>VLTI</span>
+              </td>
+                <td>{{ selectedNodeData.av.vlti }}</td>
+            </tr>
+            <tr>
+              <td>
+                <span>{{ 'Confidence' | translate }}</span>
+              </td>
+                <td>{{ selectedNodeData.tv.details.confidence }}</td>
+            </tr>
+            <tr>
+              <td>
+                <span>{{ 'Strength' | translate }}</span>
+              </td>
+                <td>{{ selectedNodeData.tv.details.strength }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <svg id="svgcanvas" *ngIf="parsedJson">
+      </svg>
+    </div>
+  </div>
+</div>

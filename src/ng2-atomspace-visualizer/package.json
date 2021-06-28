@@ -1,0 +1,64 @@
+{
+  "_from": "ng2-atomspace-visualizer@^1.3.7",
+  "_id": "ng2-atomspace-visualizer@1.3.9",
+  "_inBundle": false,
+  "_integrity": "sha512-3YXPjnKTdqegXB/mHSrp0ZSiSvdgBxer+by2pa2SlYrtFdDyrCep5sZsEi97ZDSwWrwzX/7P4t1w1IAoed9rgA==",
+  "_location": "/ng2-atomspace-visualizer",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "ng2-atomspace-visualizer@^1.3.7",
+    "name": "ng2-atomspace-visualizer",
+    "escapedName": "ng2-atomspace-visualizer",
+    "rawSpec": "^1.3.7",
+    "saveSpec": null,
+    "fetchSpec": "^1.3.7"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/ng2-atomspace-visualizer/-/ng2-atomspace-visualizer-1.3.9.tgz",
+  "_shasum": "67beba610424974a028ce8965e7d7afde9ab28fa",
+  "_spec": "ng2-atomspace-visualizer@^1.3.7",
+  "_where": "/home/linas/src/novamente/src/atomspace-explorer",
+  "author": {
+    "name": "tsadkan yitbarek"
+  },
+  "bugs": {
+    "url": "https://gitlab.com/icog-labs/atomspace-visualizer/issues"
+  },
+  "bundleDependencies": false,
+  "contributors": [
+    {
+      "name": "mikyas damtew"
+    },
+    {
+      "name": "kaleab yitbarek"
+    },
+    {
+      "name": "stephen sherman",
+      "url": "sshermz"
+    }
+  ],
+  "dependencies": {
+    "d3": "^4.11.0",
+    "d3-context-menu": "^0.1.2",
+    "jquery": "^3.2.1",
+    "semantic-ui": "^2.2.10"
+  },
+  "deprecated": false,
+  "description": "visualizer for the opencog atomspace.",
+  "homepage": "https://gitlab.com/icog-labs/atomspace-visualizer#readme",
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "name": "ng2-atomspace-visualizer",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/icog-labs/atomspace-visualizer.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.3.9"
+}
