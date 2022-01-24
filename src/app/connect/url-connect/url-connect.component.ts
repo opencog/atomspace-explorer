@@ -90,6 +90,10 @@ export class UrlConnectComponent implements OnInit {
       .subscribe(res => {
         // const json = JSON.stringify(res); console.log(json);
         const numAtoms = res.result.atoms.length;
+        // Add default attentionvalue data to prevent error while visualizing
+        for (var i = 0; i < numAtoms; i++){
+          res.result.atoms[i]['attentionvalue'] =  {"lti": 0, "sti": 0, "vlti": false};
+         }
         // console.log(res);
         console.log('Fetched ' + numAtoms + ' atoms from ' + this.url);
         this.localStorageService.set(this.urlKey, this.url);
