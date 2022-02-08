@@ -256,12 +256,43 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     }
   }
 
+   // Function to extract salient features of an atomspace based on outgoing number of links
+   salientOutGoingLinks() {
+
+        const numberOfNodesToShow = 20;
+        var newParsedJson;
+
+        if (this.atoms) {
+            console.log('-----------------------------------')
+            var tempParsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+            console.log(tempParsedJson.nodes);
+            console.log(tempParsedJson.nodes.length);
+            console.log(tempParsedJson.links);
+            console.log(tempParsedJson.links.length);
+            console.log(typeof tempParsedJson.nodes);
+            console.log(typeof tempParsedJson.links);
+
+
+            // Get the cut-off number of incoming + outgoing count for a node
+//             for (let i in obj) {
+//                 result += obj_name + '.' + i + ' = ' + obj[i] + '<br>';
+//             }
+
+            // Construct newParsedJson
+            newParsedJson = tempParsedJson;
+
+
+            return newParsedJson;
+        }
+   }
+
   /*
    * Post-Init
    */
   ngAfterViewInit() {
     if (this.atoms) {
-      this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+      // this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+      this.parsedJson = this.salientOutGoingLinks()
       if (this.atoms.result.atoms.length) {
         let resultStr = 'Loaded ' + this.atoms.result.atoms.length + ' atoms';
         if (typeof this.atoms.result.complete !== 'undefined') { resultStr += ', complete=' + this.atoms.result.complete; }
