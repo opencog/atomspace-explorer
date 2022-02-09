@@ -260,11 +260,17 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
    salientOutGoingLinks() {
 
         const numberOfNodesToShow = 20;
-        var newParsedJson;
+        var newParsedJson ;
+        var sumInOut = new Array();
+        var sortedSumInOut;
+        var cutOffValue = 0;
+        var tempNodes = new Array();
+
 
         if (this.atoms) {
             console.log('-----------------------------------')
             var tempParsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+            console.log(tempParsedJson);
             console.log(tempParsedJson.nodes);
             console.log(tempParsedJson.nodes.length);
             console.log(tempParsedJson.links);
@@ -272,15 +278,36 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
             console.log(typeof tempParsedJson.nodes);
             console.log(typeof tempParsedJson.links);
 
-
             // Get the cut-off number of incoming + outgoing count for a node
-//             for (let i in obj) {
-//                 result += obj_name + '.' + i + ' = ' + obj[i] + '<br>';
-//             }
+
+
+            for (let i = 0; i < tempParsedJson.nodes.length; i++) {
+                sumInOut[i] = tempParsedJson.nodes[i].incoming.length + tempParsedJson.nodes[i].outgoing.length
+            }
+            sortedSumInOut = [...sumInOut].sort()
+            sortedSumInOut.reverse();
+            console.log('sortedSumInOut\n'+sortedSumInOut)
+
+            if (sortedSumInOut.length >= numberOfNodesToShow)
+                cutOffValue = sortedSumInOut[numberOfNodesToShow-1];
+
+            console.log('cutOffValue =', cutOffValue);
+
+            let i = 0;
+            let iTempNode = 0;
+            do {
+                    if (sumInOut[i] >= cutOffValue){
+                        tempNodes[iTempNode] = tempParsedJson.nodes[i];
+                        iTempNode = iTempNode + 1;
+                    }
+                    i = i + 1;
+
+            } while (tempNodes.length < numberOfNodesToShow);
+
+            console.log('tempNodes:', tempNodes)
 
             // Construct newParsedJson
             newParsedJson = tempParsedJson;
-
 
             return newParsedJson;
         }
