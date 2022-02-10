@@ -261,6 +261,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
         const numberOfNodesToShow = 20;
         var sumInOut = new Array();
+        var sumInOutId = new Array();
         var sortedSumInOut;
         var cutOffValue = 0;
         var tempNodes = new Array();
@@ -282,10 +283,12 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
             for (let i = 0; i < tempParsedJson.nodes.length; i++) {
                 sumInOut[i] = tempParsedJson.nodes[i].incoming.length + tempParsedJson.nodes[i].outgoing.length;
+                sumInOutId[i] = tempParsedJson.nodes[i].id
             }
             sortedSumInOut = [...sumInOut].sort()
             sortedSumInOut.reverse();
-            console.log('sortedSumInOut\n'+sortedSumInOut)
+            console.log('sortedSumInOut\n',sortedSumInOut)
+            console.log('sumInOutId\n',sumInOutId)
 
             if (sortedSumInOut.length >= numberOfNodesToShow)
                 cutOffValue = sortedSumInOut[numberOfNodesToShow-1];
@@ -301,14 +304,29 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
                     }
                 else if(sumInOut[i] >= cutOffValue && iTempNode >= numberOfNodesToShow){
                         tempParsedJson.nodes[i]["color"] = "#C0C0C0";
+//                         if (tempParsedJson.nodes[i]['name'] == ""){
+//                             tempParsedJson.nodes[i]['group'] = ""
+//                             tempParsedJson.nodes[i]['type'] = ""
+//                         }
                 }
-                else
+                else {
                     tempParsedJson.nodes[i]["color"] = "#C0C0C0";
+                }
             }
+
+            console.log('tempParsedJson.links\n',tempParsedJson.links)
 
             for (let i = 0; i < tempParsedJson.links.length; i++) {
 
-                ;//tempParsedJson.nodes[i]["color"] = "#FFFFFF";
+//                 if (tempParsedJson.links[i]['source']);//tempParsedJson.nodes[i]["color"] = "#FFFFFF";
+//                 if (tempParsedJson.links[i]['source']['name'] == "" || tempParsedJson.links[i]['target']['name'] == "") {
+//                     tempParsedJson.links[i]['source']['group'] = "";
+//                     tempParsedJson.links[i]['source']['type'] = "";
+//                     tempParsedJson.links[i]['target']['group'] = "";
+//                     tempParsedJson.links[i]['target']['type'] = "";
+//                     console.log('Found')
+//                 }
+                 tempParsedJson.links[i]['name'] = ''
 
             }
 
