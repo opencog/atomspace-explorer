@@ -91,6 +91,7 @@ let reheatFactor = 1;
 let widthView = 0;
 let heightView = 0;
 let filterMenuInitialized = false;
+let salientProcessing = {};
 
 /*
  * IE Detection utility function
@@ -277,6 +278,18 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
             console.log(tempParsedJson.links.length);
             console.log(typeof tempParsedJson.nodes);
             console.log(typeof tempParsedJson.links);
+
+            // Save data of nodes/links for later
+            let tempParsedJson2 = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+            console.log('tempParsedJson2\n', tempParsedJson2);
+
+            for (let i = 0; i < tempParsedJson2.nodes.length; i++) {
+                salientProcessing[tempParsedJson2.nodes[i]["id"]]=tempParsedJson2.nodes[i]["color"];
+                console.log(i,tempParsedJson2.nodes[i]);
+                console.log(i,tempParsedJson2.nodes[i]["color"]);
+            }
+
+            console.log('salientProcessing\n',salientProcessing);
 
             // Get the cut-off number of incoming + outgoing count for a node
 
@@ -1354,6 +1367,17 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
      */
     function nodeDoubleClick(d) {
       // console.log('Doubleclick: ', d);
+
+      let tempParsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+//       let idD = d["id"];
+      for (let i = 0; i < tempParsedJson.nodes.length; i++) {
+//         let id = tempParsedJson.nodes["id"];
+        this.parsedJson.nodes[i]["color"] = "red";
+
+
+      }
+
+      // d['color'] = tempParsedJson.nodes['id']['color'];
 
       this.isDrilledNodes = true;
       this.selectedNodeData = d;
