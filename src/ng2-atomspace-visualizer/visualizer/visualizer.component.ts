@@ -280,7 +280,6 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
             // Get the cut-off number of incoming + outgoing count for a node
 
-
             for (let i = 0; i < tempParsedJson.nodes.length; i++) {
                 sumInOut[i] = tempParsedJson.nodes[i].incoming.length + tempParsedJson.nodes[i].outgoing.length;
                 sumInOutId[i] = tempParsedJson.nodes[i].id
@@ -296,7 +295,15 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
             console.log('cutOffValue =', cutOffValue);
 
             let iTempNode = 0;
+            let iCutOffValue = 1;
             for (let i = 0; i < tempParsedJson.nodes.length; i++) {
+
+                if(tempParsedJson.nodes[i]["type"] == "TimeNode") {
+                    cutOffValue = sortedSumInOut[numberOfNodesToShow-1+iCutOffValue];
+                    iCutOffValue = iCutOffValue + 1;
+                    tempParsedJson.nodes[i]["color"] = "#C0C0C0";
+                    continue;
+                }
 
                 if (sumInOut[i] >= cutOffValue && iTempNode < numberOfNodesToShow){
                         tempParsedJson.nodes[i]["color"] = "#146EB4";
@@ -304,10 +311,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
                     }
                 else if(sumInOut[i] >= cutOffValue && iTempNode >= numberOfNodesToShow){
                         tempParsedJson.nodes[i]["color"] = "#C0C0C0";
-//                         if (tempParsedJson.nodes[i]['name'] == ""){
-//                             tempParsedJson.nodes[i]['group'] = ""
-//                             tempParsedJson.nodes[i]['type'] = ""
-//                         }
+
                 }
                 else {
                     tempParsedJson.nodes[i]["color"] = "#C0C0C0";
@@ -318,14 +322,6 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
             for (let i = 0; i < tempParsedJson.links.length; i++) {
 
-//                 if (tempParsedJson.links[i]['source']);//tempParsedJson.nodes[i]["color"] = "#FFFFFF";
-//                 if (tempParsedJson.links[i]['source']['name'] == "" || tempParsedJson.links[i]['target']['name'] == "") {
-//                     tempParsedJson.links[i]['source']['group'] = "";
-//                     tempParsedJson.links[i]['source']['type'] = "";
-//                     tempParsedJson.links[i]['target']['group'] = "";
-//                     tempParsedJson.links[i]['target']['type'] = "";
-//                     console.log('Found')
-//                 }
                  tempParsedJson.links[i]['name'] = ''
 
             }
