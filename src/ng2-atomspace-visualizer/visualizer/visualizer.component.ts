@@ -270,7 +270,8 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
         if (this.atoms) {
             console.log('-----------------------------------')
-            var tempParsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+            // var tempParsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+            var tempParsedJson = this.parsedJson;
             console.log('tempParsedJson\n', tempParsedJson);
             console.log(tempParsedJson.nodes);
             console.log(tempParsedJson.nodes.length);
@@ -279,17 +280,17 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
             console.log(typeof tempParsedJson.nodes);
             console.log(typeof tempParsedJson.links);
 
-//             // Save data of nodes/links for later
-//             let tempParsedJson2 = this.visualizerService.getParsedJson(this.atoms.result.atoms);
-//             console.log('tempParsedJson2\n', tempParsedJson2);
-//
-//             for (let i = 0; i < tempParsedJson2.nodes.length; i++) {
-//                 salientProcessing[tempParsedJson2.nodes[i]["id"]]=tempParsedJson2.nodes[i]["color"];
-//                 console.log(i,tempParsedJson2.nodes[i]);
-//                 console.log(i,tempParsedJson2.nodes[i]["color"]);
-//             }
-//
-//             console.log('salientProcessing\n',salientProcessing);
+            // Save data of nodes/links for later
+            // let tempParsedJson2 = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+            console.log('this.parsedJson\n', this.parsedJson);
+
+            for (let i = 0; i < this.parsedJson.nodes.length; i++) {
+                salientProcessing[this.parsedJson.nodes[i]["id"]]=this.parsedJson.nodes[i]["color"];
+                console.log(i,this.parsedJson.nodes[i]);
+                console.log(i,this.parsedJson.nodes[i]["color"]);
+            }
+
+            console.log('salientProcessing\n',salientProcessing);
 
             // Get the cut-off number of incoming + outgoing count for a node
 
@@ -350,7 +351,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
   ngAfterViewInit() {
     if (this.atoms) {
       this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
-//       this.parsedJson = this.salientIncomingOutgoingLinks();
+      // this.parsedJson = this.salientIncomingOutgoingLinks();
       if (this.atoms.result.atoms.length) {
         let resultStr = 'Loaded ' + this.atoms.result.atoms.length + ' atoms';
         if (typeof this.atoms.result.complete !== 'undefined') { resultStr += ', complete=' + this.atoms.result.complete; }
@@ -362,22 +363,14 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
       isSimulationRunning = true;
       this.isInitialLoad = false;
 
+      this.parsedJson = this.salientIncomingOutgoingLinks();
 
-      // Save data of nodes/links for later
-//             let tempParsedJson2 = this.visualizerService.getParsedJson(this.atoms.result.atoms);
-            let tempParsedJson2 = this.parsedJson;
-            console.log('tempParsedJson2\n', tempParsedJson2);
-
-            for (let i = 0; i < tempParsedJson2.nodes.length; i++) {
-                salientProcessing[tempParsedJson2.nodes[i]["id"]]=tempParsedJson2.nodes[i]["color"];
-                console.log(i,tempParsedJson2.nodes[i]);
-                console.log(i,tempParsedJson2.nodes[i]["color"]);
-            }
-
-            console.log('salientProcessing\n',salientProcessing);
-
-
-      this.showAll();
+      // Calling draw_graph twice (along with setting flags, etc) might be a lees that ideal hack.
+      // Redrawing simulation in draw_graph might be a good solution.
+      this.draw_graph();
+      isSimulationRunning = true;
+      this.isInitialLoad = false;
+      // Calling draw_graph twice ends
 
     }
   }
@@ -707,8 +700,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     if (isSimulationRunning) { simulation.stop(); }
 
     // Get Data
-    // this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
-    this.parsedJson = this.salientIncomingOutgoingLinks();
+    this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
     // console.log(this.parsedJson);
 
     this.closeSelectedNodeProps();
@@ -716,6 +708,18 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     filterMenuInitialized = false;
 
     this.draw_graph();
+
+    this.parsedJson = this.salientIncomingOutgoingLinks();
+
+    // Calling draw_graph twice (along with setting flags, etc) might be a lees that ideal hack.
+    // Redrawing simulation in draw_graph might be a good solution.
+    this.closeSelectedNodeProps();
+    this.isDrilledNodes = false;
+    filterMenuInitialized = false;
+
+    this.draw_graph();
+    // Calling draw_graph twice ends
+
 
     if (isSimulationRunning) { simulation.restart(); }
   }
@@ -1068,6 +1072,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
       .style('fill', '#fff')  // Text color inside nodes.
       .style('opacity', opacityNodeLabel);
 
+
     // Setup Node and D3 client area handlers
     this.node.on('click', (d) => nodeSingleClick.call(this, d));
     this.node.on('dblclick', (d) => nodeDoubleClick.call(this, d));
@@ -1388,16 +1393,10 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     function nodeDoubleClick(d) {
       // console.log('Doubleclick: ', d);
 
-      let tempParsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
-//       let idD = d["id"];
-      for (let i = 0; i < tempParsedJson.nodes.length; i++) {
-//         let id = tempParsedJson.nodes["id"];
-        this.parsedJson.nodes[i]["color"] = "red";
-
-
+      // Apply previously saved attributes like color
+      for (let i = 0; i < this.parsedJson.nodes.length; i++) {
+        this.parsedJson.nodes[i]["color"] = salientProcessing[i];
       }
-
-      // d['color'] = tempParsedJson.nodes['id']['color'];
 
       this.isDrilledNodes = true;
       this.selectedNodeData = d;
