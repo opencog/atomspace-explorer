@@ -365,7 +365,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
       this.parsedJson = this.salientIncomingOutgoingLinks();
 
-      // Calling draw_graph twice (along with setting flags, etc) might be a lees that ideal hack.
+      // Calling draw_graph twice (along with setting flags, etc) might be a less than ideal hack.
       // Redrawing simulation in draw_graph might be a good solution.
       this.draw_graph();
       isSimulationRunning = true;
@@ -711,7 +711,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
     this.parsedJson = this.salientIncomingOutgoingLinks();
 
-    // Calling draw_graph twice (along with setting flags, etc) might be a lees that ideal hack.
+    // Calling draw_graph twice (along with setting flags, etc) might be a less than ideal hack.
     // Redrawing simulation in draw_graph might be a good solution.
     this.closeSelectedNodeProps();
     this.isDrilledNodes = false;
