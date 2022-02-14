@@ -257,8 +257,8 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     }
   }
 
-   // Function to extract salient features of an atomspace based on outgoing number of links
-   salientOutGoingLinks() {
+   // Function to extract salient features of an atomspace based on incoming/outgoing number of links
+   salientIncomingOutgoingLinks() {
 
         const numberOfNodesToShow = 20;
         var sumInOut = new Array();
@@ -279,17 +279,17 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
             console.log(typeof tempParsedJson.nodes);
             console.log(typeof tempParsedJson.links);
 
-            // Save data of nodes/links for later
-            let tempParsedJson2 = this.visualizerService.getParsedJson(this.atoms.result.atoms);
-            console.log('tempParsedJson2\n', tempParsedJson2);
-
-            for (let i = 0; i < tempParsedJson2.nodes.length; i++) {
-                salientProcessing[tempParsedJson2.nodes[i]["id"]]=tempParsedJson2.nodes[i]["color"];
-                console.log(i,tempParsedJson2.nodes[i]);
-                console.log(i,tempParsedJson2.nodes[i]["color"]);
-            }
-
-            console.log('salientProcessing\n',salientProcessing);
+//             // Save data of nodes/links for later
+//             let tempParsedJson2 = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+//             console.log('tempParsedJson2\n', tempParsedJson2);
+//
+//             for (let i = 0; i < tempParsedJson2.nodes.length; i++) {
+//                 salientProcessing[tempParsedJson2.nodes[i]["id"]]=tempParsedJson2.nodes[i]["color"];
+//                 console.log(i,tempParsedJson2.nodes[i]);
+//                 console.log(i,tempParsedJson2.nodes[i]["color"]);
+//             }
+//
+//             console.log('salientProcessing\n',salientProcessing);
 
             // Get the cut-off number of incoming + outgoing count for a node
 
@@ -349,8 +349,8 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
    */
   ngAfterViewInit() {
     if (this.atoms) {
-      // this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
-      this.parsedJson = this.salientOutGoingLinks()
+      this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+//       this.parsedJson = this.salientIncomingOutgoingLinks();
       if (this.atoms.result.atoms.length) {
         let resultStr = 'Loaded ' + this.atoms.result.atoms.length + ' atoms';
         if (typeof this.atoms.result.complete !== 'undefined') { resultStr += ', complete=' + this.atoms.result.complete; }
@@ -361,6 +361,24 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
       this.draw_graph();
       isSimulationRunning = true;
       this.isInitialLoad = false;
+
+
+      // Save data of nodes/links for later
+//             let tempParsedJson2 = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+            let tempParsedJson2 = this.parsedJson;
+            console.log('tempParsedJson2\n', tempParsedJson2);
+
+            for (let i = 0; i < tempParsedJson2.nodes.length; i++) {
+                salientProcessing[tempParsedJson2.nodes[i]["id"]]=tempParsedJson2.nodes[i]["color"];
+                console.log(i,tempParsedJson2.nodes[i]);
+                console.log(i,tempParsedJson2.nodes[i]["color"]);
+            }
+
+            console.log('salientProcessing\n',salientProcessing);
+
+
+      this.showAll();
+
     }
   }
 
@@ -689,7 +707,8 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     if (isSimulationRunning) { simulation.stop(); }
 
     // Get Data
-    this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+    // this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+    this.parsedJson = this.salientIncomingOutgoingLinks();
     // console.log(this.parsedJson);
 
     this.closeSelectedNodeProps();
@@ -814,6 +833,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     // Set up Force Simulation
     const defaultAlphaDecay = 1 - Math.pow(0.001, 1 / 300);  // ~0.0228.
     const alphaDecay = this.atoms.result.atoms.length < 50 ? 0.008 : defaultAlphaDecay;
+
     if (simulation) { simulation.stop(); }  // Make sure simulation is stopped, else get nodes "explosion" effect.
     simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id(function (d) { return d.id; }).distance(100))  // .strength(1))
