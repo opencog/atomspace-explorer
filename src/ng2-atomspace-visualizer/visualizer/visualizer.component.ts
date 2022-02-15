@@ -91,7 +91,8 @@ let reheatFactor = 1;
 let widthView = 0;
 let heightView = 0;
 let filterMenuInitialized = false;
-let salientProcessing = {};
+let salientProcessingColor = {};
+let salientProcessingLinkNames = {};
 
 /*
  * IE Detection utility function
@@ -280,17 +281,17 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
             console.log(typeof tempParsedJson.nodes);
             console.log(typeof tempParsedJson.links);
 
-            // Save data of nodes/links for later
+            // Save color of nodes/links for later
             // let tempParsedJson2 = this.visualizerService.getParsedJson(this.atoms.result.atoms);
             console.log('this.parsedJson\n', this.parsedJson);
 
             for (let i = 0; i < this.parsedJson.nodes.length; i++) {
-                salientProcessing[this.parsedJson.nodes[i]["id"]]=this.parsedJson.nodes[i]["color"];
+                salientProcessingColor[this.parsedJson.nodes[i]["id"]]=this.parsedJson.nodes[i]["color"];
                 console.log(i,this.parsedJson.nodes[i]);
                 console.log(i,this.parsedJson.nodes[i]["color"]);
             }
 
-            console.log('salientProcessing\n',salientProcessing);
+            console.log('salientProcessingColor\n',salientProcessingColor);
 
             // Get the cut-off number of incoming + outgoing count for a node
 
@@ -332,11 +333,22 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
                 }
             }
 
-            console.log('tempParsedJson.links\n',tempParsedJson.links)
+
+            // Save name of links for later
+
+            console.log('tempParsedJson.links\n',tempParsedJson.links);
+
+            for (let i = 0; i < this.parsedJson.links.length; i++) {
+                salientProcessingLinkNames[this.parsedJson.links[i]['index']]=this.parsedJson.links[i]['name'];
+            }
+
+            console.log('salientProcessingLinkNames\n',salientProcessingLinkNames);
+
+            //  Empty name field of links
 
             for (let i = 0; i < tempParsedJson.links.length; i++) {
 
-                 tempParsedJson.links[i]['name'] = ''
+                 tempParsedJson.links[i]['name'] = '';
 
             }
 
@@ -1393,9 +1405,14 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     function nodeDoubleClick(d) {
       // console.log('Doubleclick: ', d);
 
-      // Apply previously saved attributes like color
+      // Apply previously saved attributes like color, link names
+
       for (let i = 0; i < this.parsedJson.nodes.length; i++) {
-        this.parsedJson.nodes[i]["color"] = salientProcessing[i];
+        this.parsedJson.nodes[i]["color"] = salientProcessingColor[i];
+      }
+
+      for (let i = 0; i < this.parsedJson.links.length; i++) {
+        this.parsedJson.links[i]["name"] = salientProcessingLinkNames[i];
       }
 
       this.isDrilledNodes = true;
