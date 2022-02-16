@@ -270,8 +270,6 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
 
         if (this.atoms) {
-            console.log('-----------------------------------')
-            // var tempParsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
             var tempParsedJson = this.parsedJson;
             console.log('tempParsedJson\n', tempParsedJson);
             console.log(tempParsedJson.nodes);
@@ -287,8 +285,6 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
             for (let i = 0; i < this.parsedJson.nodes.length; i++) {
                 salientProcessingColor[this.parsedJson.nodes[i]["id"]]=this.parsedJson.nodes[i]["color"];
-                console.log(i,this.parsedJson.nodes[i]);
-                console.log(i,this.parsedJson.nodes[i]["color"]);
             }
 
             console.log('salientProcessingColor\n',salientProcessingColor);
@@ -362,6 +358,15 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
    */
   ngAfterViewInit() {
     if (this.atoms) {
+
+      //Replace instances of back with null string for now till fix is done on opencog code
+      for (let i = 0; i < this.atoms.result.atoms.length; i++) {
+            this.atoms.result.atoms[i]["name"] = this.atoms.result.atoms[i]["name"].replace(/back-/ig,"");
+            this.atoms.result.atoms[i]["name"] = this.atoms.result.atoms[i]["name"].replace(/back/ig,"");
+            this.atoms.result.atoms[i]["type"] = this.atoms.result.atoms[i]["type"].replace(/back-/ig,"");
+            this.atoms.result.atoms[i]["type"] = this.atoms.result.atoms[i]["type"].replace(/back/ig,"");
+      }
+
       this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
       // this.parsedJson = this.salientIncomingOutgoingLinks();
       if (this.atoms.result.atoms.length) {
