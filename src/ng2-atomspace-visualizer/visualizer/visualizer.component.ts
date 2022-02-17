@@ -367,6 +367,20 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
    }
 
+   // Function to replace some links with symbols
+   replaceLinkNames() {
+
+   //Replace link names
+   /*   for (let i = 0; i < this.atoms.result.atoms.length; i++) {
+            this.atoms.result.atoms[i]["name"] = this.atoms.result.atoms[i]["name"].replace(/back-/ig,"");
+            this.atoms.result.atoms[i]["name"] = this.atoms.result.atoms[i]["name"].replace(/back/ig,"");
+            this.atoms.result.atoms[i]["type"] = this.atoms.result.atoms[i]["type"].replace(/back-/ig,"");
+            this.atoms.result.atoms[i]["type"] = this.atoms.result.atoms[i]["type"].replace(/back/ig,"");
+      }*/
+
+
+   }
+
   /*
    * Post-Init
    */
