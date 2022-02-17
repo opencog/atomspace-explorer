@@ -353,19 +353,27 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
         }
    }
 
-  /*
-   * Post-Init
-   */
-  ngAfterViewInit() {
-    if (this.atoms) {
+   // Function to preprocess atoms that are returned from calling visualizerService
+   preprocessAtoms() {
 
-      //Replace instances of back with null string for now till fix is done on opencog code
+   //Replace instances of back with null string for now till fix is done on opencog code
       for (let i = 0; i < this.atoms.result.atoms.length; i++) {
             this.atoms.result.atoms[i]["name"] = this.atoms.result.atoms[i]["name"].replace(/back-/ig,"");
             this.atoms.result.atoms[i]["name"] = this.atoms.result.atoms[i]["name"].replace(/back/ig,"");
             this.atoms.result.atoms[i]["type"] = this.atoms.result.atoms[i]["type"].replace(/back-/ig,"");
             this.atoms.result.atoms[i]["type"] = this.atoms.result.atoms[i]["type"].replace(/back/ig,"");
       }
+
+
+   }
+
+  /*
+   * Post-Init
+   */
+  ngAfterViewInit() {
+    if (this.atoms) {
+
+      this.preprocessAtoms();
 
       this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
       // this.parsedJson = this.salientIncomingOutgoingLinks();
@@ -715,6 +723,8 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     // console.log('showAll()');
 
     if (isSimulationRunning) { simulation.stop(); }
+
+    this.preprocessAtoms();
 
     // Get Data
     this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
