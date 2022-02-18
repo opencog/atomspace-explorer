@@ -963,12 +963,12 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
       .style('stroke-width', strokeWidthLink)
       .style('stroke-linecap', 'round')
       .attr('marker-end', 'url(#markerEnd)')  // Arrow to show incoming direction.
-      .attr('marker-start', function(d) {  // Also add outgoing arrow for unordered (symmetric links)
+      /*.attr('marker-start', function(d) {  // Also add outgoing arrow for unordered (symmetric links)
         for (let i = 0; __this.unordered_linktypes && i < __this.unordered_linktypes.length; i++) {
           if (d.name === __this.unordered_linktypes[i]) { return 'url(#markerStart)'; }
         }
         return '';
-      });
+      })*/;
       /* Mouseover/out over link lines no longer works after converting from lines to paths (including arcs). Was hard
        * for users to trigger over the narrow link lines anyway, so just leaving link labels as the mouseover target
       .on('mouseover', (d) => linkMouseOver.call(this, d))
