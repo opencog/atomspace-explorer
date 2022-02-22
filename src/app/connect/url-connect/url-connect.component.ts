@@ -22,6 +22,8 @@ const defUnorderedLinktypes = [
    'EquivalenceLink', 'IdenticalLink',
    'NotLink', 'OrLink', 'SetLink', 'SimilarityLink'];
 
+let count = 0;
+
 @Component({
   selector: 'app-url-connect',
   templateUrl: './url-connect.component.html',
@@ -60,7 +62,18 @@ export class UrlConnectComponent implements OnInit {
     if (savedURL !== null) {
       this.url = savedURL;
     }
+
+    setInterval(() => {
+	    this.inc();
+	}, 1000);
+	console.log('setInterval called');
   }
+
+  inc() {
+    count = count + 1;
+    console.log(count);
+  }
+
 
   // Fetch results from a CogServer (or from a built-in sample json file located in the assets folder)
   fetchJson() {
