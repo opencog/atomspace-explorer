@@ -22,7 +22,7 @@ const defUnorderedLinktypes = [
    'EquivalenceLink', 'IdenticalLink',
    'NotLink', 'OrLink', 'SetLink', 'SimilarityLink'];
 
-let count = 0;
+let flag = false;
 
 @Component({
   selector: 'app-url-connect',
@@ -64,14 +64,17 @@ export class UrlConnectComponent implements OnInit {
     }
 
     setInterval(() => {
-	    this.inc();
-	}, 1000);
+	    this.update();
+	}, 3000);
 	console.log('setInterval called');
   }
 
-  inc() {
-    count = count + 1;
-    console.log(count);
+  update() {
+
+    if(flag){
+        this.fetchJson();
+    }
+    // console.log(flag);
   }
 
 
@@ -122,6 +125,8 @@ export class UrlConnectComponent implements OnInit {
         this.errMsg = err.message;
         console.log(err);
       });
+
+      flag = true;
   }
 
   // Load sample data

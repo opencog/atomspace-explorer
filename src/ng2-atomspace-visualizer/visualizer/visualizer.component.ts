@@ -93,6 +93,7 @@ let heightView = 0;
 let filterMenuInitialized = false;
 let salientProcessingColor = {};
 let salientProcessingLinkNames = {};
+let previousNumberOfAtoms = 0;
 
 /*
  * IE Detection utility function
@@ -412,6 +413,33 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
       // Calling draw_graph twice ends
 
     }
+
+    setInterval(() => {
+	    this.update();
+	}, 3000);
+	console.log('setInterval called from visualizer component');
+
+  }
+
+   update() {
+
+        if(this.atoms.result.atoms.length){
+            if(previousNumberOfAtoms != this.atoms.result.atoms.length){
+                previousNumberOfAtoms = this.atoms.result.atoms.length;
+                this.ngAfterViewInit();
+            }
+        }
+
+        if(previousNumberOfAtoms !=0 && !this.atoms.result.atoms.length){
+            console.log("previousNumberOfAtoms");
+            this.parsedJson = null;
+            this.draw_graph();
+            isSimulationRunning = true;
+            this.isInitialLoad = false;
+        }
+
+    console.log("update called from visualizer component");
+
   }
 
   /*
@@ -526,6 +554,14 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     // Draw graph
     this.draw_graph();
     isSimulationRunning = true;
+
+    this.parsedJson = this.salientIncomingOutgoingLinks();
+
+    // Calling draw_graph twice (along with setting flags, etc) might be a less than ideal hack.
+    // Redrawing simulation in draw_graph might be a good solution.
+    this.draw_graph();
+    isSimulationRunning = true;
+    // Calling draw_graph twice ends
   }
 
   /*
