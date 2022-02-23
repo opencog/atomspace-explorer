@@ -130,6 +130,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
   @Input() unordered_linktypes: string[];
   @Input() custom_style: string;
   @Input() language: string;
+  @Input() numAtoms: number;
 
   // Other Class members
   public isInitialLoad = true;
@@ -181,16 +182,23 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
    * Constructor
    */
   constructor(public visualizerService: VisualizerService, public atomService: AtomService, public _translate: TranslateService) {
+    console.log('Constructor called');
     this.atomService.editItem
       .subscribe(res => {
         const as_data: AtomServiceData = res;
 
         // Incoming data: Atoms
         const atoms: any = as_data.atoms ? as_data.atoms : null;
+
         if (atoms !== null && atoms.result.atoms.length > 0) {
-          this.atoms = as_data.atoms;
-          // console.log('VisualizerComponent atoms=' + as_data.atoms);
+              this.atoms = as_data.atoms;
+              console.log('VisualizerComponent atoms=' + as_data.atoms);
+              console.log('atoms.result.atoms.length =',atoms.result.atoms.length);
         }
+
+        // Incoming data: numAtoms
+        // const numAtoms: any = as_data.numAtoms ? as_data.numAtoms : 0;
+        this.numAtoms = as_data.numAtoms;
 
         // Incoming data: Unordered Link Types
         const uolinktypes: any = as_data.unordered_linktypes ? as_data.unordered_linktypes : null;
@@ -423,22 +431,33 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
    update() {
 
-        if(this.atoms.result.atoms.length){
-            if(previousNumberOfAtoms != this.atoms.result.atoms.length){
-                previousNumberOfAtoms = this.atoms.result.atoms.length;
-                this.ngAfterViewInit();
+        try {
+
+                    if(previousNumberOfAtoms != this.atoms.result.atoms.length){
+                        previousNumberOfAtoms = this.atoms.result.atoms.length;
+                        this.ngAfterViewInit();
+                    }
+
             }
-        }
+            catch (error) {
+                console.log(error);
+            }
 
-        if(previousNumberOfAtoms !=0 && !this.atoms.result.atoms.length){
-            console.log("previousNumberOfAtoms");
-            this.parsedJson = null;
-            this.draw_graph();
-            isSimulationRunning = true;
-            this.isInitialLoad = false;
-        }
 
-    console.log("update called from visualizer component");
+            if (this.numAtoms == 0 && previousNumberOfAtoms !=0){
+
+                  previousNumberOfAtoms = 0;
+                  this.parsedJson = this.visualizerService.getParsedJson([]);
+
+                  this.draw_graph();
+                  isSimulationRunning = true;
+                  this.isInitialLoad = false;
+
+                  console.log('In if (this.numAtoms == 0 && previousNumberOfAtoms !=0)');
+
+            }
+
+
 
   }
 

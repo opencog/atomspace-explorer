@@ -20,6 +20,7 @@ export interface AtomServiceData {
   unordered_linktypes: string[];
   custom_style: string;
   language: string;
+  numAtoms: number;
 }
 
 @Injectable()
@@ -28,7 +29,8 @@ export class AtomService {
     atoms: emptyAtomSpace,
     unordered_linktypes: emptyUnorderedLinktypes,
     custom_style: emptyStyle,
-    language: defaultLang };
+    language: defaultLang,
+    numAtoms: 0};
   private editItemSource: BehaviorSubject<any> = new BehaviorSubject(this.defaultState);
   public editItem = this.editItemSource.asObservable().distinctUntilChanged();
 

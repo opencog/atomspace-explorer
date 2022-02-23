@@ -23,6 +23,7 @@ const defUnorderedLinktypes = [
    'NotLink', 'OrLink', 'SetLink', 'SimilarityLink'];
 
 let flag = false;
+let numberAtoms = 0;
 
 @Component({
   selector: 'app-url-connect',
@@ -106,6 +107,8 @@ export class UrlConnectComponent implements OnInit {
       .subscribe(res => {
         // const json = JSON.stringify(res); console.log(json);
         const numAtoms = res.result.atoms.length;
+        numberAtoms = res.result.atoms.length;
+        console.log('numberAtoms in fetchJson =',numberAtoms);
         // Add default attentionvalue data to prevent error while visualizing
         for (var i = 0; i < numAtoms; i++){
           res.result.atoms[i]['attentionvalue'] =  {"lti": 0, "sti": 0, "vlti": false};
@@ -120,6 +123,7 @@ export class UrlConnectComponent implements OnInit {
         }
         // change the atoms to be visualized
         this.visualizeResult(res);
+        console.log('res\n',res);
       }, err => {
         this.connecting = false;
         this.errMsg = err.message;
@@ -179,10 +183,12 @@ export class UrlConnectComponent implements OnInit {
 
   // Display visualizer
   private visualizeResult(res) {
-    const as_data: AtomServiceData = { atoms: null, unordered_linktypes: null, custom_style: null, language: null };
+    const as_data: AtomServiceData = { atoms: null, unordered_linktypes: null, custom_style: null, language: null, numAtoms: null};
 
     // Configure inputs
     as_data.atoms = res;
+    as_data.numAtoms = numberAtoms;
+    console.log("numberAtoms in visualizeResult =", numberAtoms);
     if (this.unorderedLinkTypesArr !== null) {
       as_data.unordered_linktypes = this.unorderedLinkTypesArr;
     }

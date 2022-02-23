@@ -51,7 +51,7 @@ export class MainContainer implements OnInit{
         this.localStorageService.set(this.langKey, lang);
 
         /// Set language of the atomspace-visualizer module so it matches the container app
-        const as_data: AtomServiceData = { atoms: null, unordered_linktypes: null, custom_style: null, language: lang };
+        const as_data: AtomServiceData = { atoms: null, unordered_linktypes: null, custom_style: null, language: lang, numAtoms: null };
         this._atomsService.changeItem(as_data);
     }
 
