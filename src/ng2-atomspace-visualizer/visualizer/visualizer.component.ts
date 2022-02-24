@@ -1195,7 +1195,8 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
      */
     simulation
       .nodes(this.parsedJson.nodes)
-      .on('tick', () => graphTick.call(this));
+      // .on('tick', () => graphTick.call(this));
+      .stop();
 
     // Simulation Links
     simulation.force('link')
@@ -1214,6 +1215,11 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
       }
     });
     // console.log(linkedByOutgoing);
+    for (var i = 0; i < 300; ++i) {
+    simulation.tick();
+  }
+
+  graphTick.call(this)
 
     /*
      * Node Drag implementation
