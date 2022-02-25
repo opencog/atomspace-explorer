@@ -1216,10 +1216,10 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     });
     // console.log(linkedByOutgoing);
     for (var i = 0; i < 300; ++i) {
-    simulation.tick();
-  }
+        simulation.tick();
+    }
 
-  graphTick.call(this)
+    graphTick.call(this)
 
     /*
      * Node Drag implementation
