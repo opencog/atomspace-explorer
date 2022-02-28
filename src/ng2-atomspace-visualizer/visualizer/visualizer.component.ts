@@ -94,6 +94,9 @@ let filterMenuInitialized = false;
 let salientProcessingColor = {};
 let salientProcessingLinkNames = {};
 let previousNumberOfAtoms = 0;
+/*let previousAtoms = []
+let colorNewlyAddedNodes = false;
+let restoreColorOfNewlyAddedNodes = false;*/
 
 /*
  * IE Detection utility function
@@ -336,7 +339,38 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
                 else {
                     tempParsedJson.nodes[i]["color"] = "#C0C0C0";
                 }
+
+                /* let stringToSearch = "";
+                let searchResult = -2;
+                console.log('previousAtoms.length =', previousAtoms.length);
+                if (colorNewlyAddedNodes && previousAtoms.length != 0) {
+
+                    stringToSearch = '"handle":'+(tempParsedJson.nodes[i]["id"]).toString();
+                    searchResult =  (JSON.stringify(previousAtoms)).search(stringToSearch);
+                    // console.log('JSON.stringify(previousAtoms)\n', JSON.stringify(previousAtoms));
+                    // console.log('stringToSearch\n',stringToSearch);
+                    // console.log('searchResult =',searchResult);
+                    if (searchResult == -1) {
+
+                        tempParsedJson.nodes[i]["color"] = "#EE82EE";
+
+
+                    }
+
+
+                } */
+
+
             }
+
+            /* if (!colorNewlyAddedNodes && restoreColorOfNewlyAddedNodes) {
+                restoreColorOfNewlyAddedNodes = false;
+            }*/
+
+            // previousAtoms = this.atoms.result.atoms;
+            // colorNewlyAddedNodes = false;
+
+            // console.log('JSON.stringify(this.atoms.result.atoms)\n',JSON.stringify(this.atoms.result.atoms));
 
 
             // Save name of links for later
@@ -433,8 +467,10 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
         try {
 
-                    if(previousNumberOfAtoms != this.atoms.result.atoms.length){
+                    if((previousNumberOfAtoms != this.atoms.result.atoms.length)) { // || restoreColorOfNewlyAddedNodes){
                         previousNumberOfAtoms = this.atoms.result.atoms.length;
+                        // colorNewlyAddedNodes = true;
+                        // restoreColorOfNewlyAddedNodes = true;
                         this.ngAfterViewInit();
                     }
 
