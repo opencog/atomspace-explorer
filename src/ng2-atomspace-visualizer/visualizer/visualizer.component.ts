@@ -1220,6 +1220,11 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
     graphTick.call(this)
 
+    // This will enable the nodes to be draggable once the graph is drawn without running simulation the first time
+    simulation.on('tick', () => graphTick.call(this));
+    simulation.restart();
+
+
     /*
      * Node Drag implementation
      */
