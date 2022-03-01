@@ -272,11 +272,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
         const numberOfNodesToShow = 20;
         var sumInOut = new Array();
-        var sumInOutId = new Array();
-        var sortedSumInOut;
-        var cutOffValue = 0;
-        var tempNodes = new Array();
-
+        var sum = 0;
 
         if (this.atoms) {
             var tempParsedJson = this.parsedJson;
@@ -296,44 +292,34 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
                 salientProcessingColor[this.parsedJson.nodes[i]["id"]]=this.parsedJson.nodes[i]["color"];
             }
 
-            console.log('salientProcessingColor\n',salientProcessingColor);
+            // console.log('salientProcessingColor\n',salientProcessingColor);
 
-            // Get the cut-off number of incoming + outgoing count for a node
+            // Sort nodes by number of incoming + outgoing
 
             for (let i = 0; i < tempParsedJson.nodes.length; i++) {
-                sumInOut[i] = tempParsedJson.nodes[i].incoming.length + tempParsedJson.nodes[i].outgoing.length;
-                sumInOutId[i] = tempParsedJson.nodes[i].id
+                sum = tempParsedJson.nodes[i].incoming.length + tempParsedJson.nodes[i].outgoing.length;
+                sumInOut[i] = [i,sum];
             }
-            sortedSumInOut = [...sumInOut].sort()
-            sortedSumInOut.reverse();
-            console.log('sortedSumInOut\n',sortedSumInOut)
-            console.log('sumInOutId\n',sumInOutId)
-
-            if (sortedSumInOut.length >= numberOfNodesToShow)
-                cutOffValue = sortedSumInOut[numberOfNodesToShow-1];
-
-            console.log('cutOffValue =', cutOffValue);
+            sumInOut.sort((first,second) => {return second[1]-first[1]});
+            // console.log('SumInOut\n',sumInOut)
 
             let iTempNode = 0;
-            let iCutOffValue = 1;
-            for (let i = 0; i < tempParsedJson.nodes.length; i++) {
+            for (let i = 0; i < sumInOut.length; i++) {
 
-                if(tempParsedJson.nodes[i]["type"] == "TimeNode") {
-                    cutOffValue = sortedSumInOut[numberOfNodesToShow-1+iCutOffValue];
-                    iCutOffValue = iCutOffValue + 1;
-                    tempParsedJson.nodes[i]["color"] = "#C0C0C0";
+                if(tempParsedJson.nodes[sumInOut[i][0]]["type"] == "TimeNode" || tempParsedJson.nodes[sumInOut[i][0]]["type"] == "NumberNode") {
+                    // console.log('In first if');
+                    tempParsedJson.nodes[sumInOut[i][0]]["color"] = "#C0C0C0";
                     continue;
                 }
 
-                if (sumInOut[i] >= cutOffValue && iTempNode < numberOfNodesToShow){
-                        tempParsedJson.nodes[i]["color"] = "#146EB4";
+                if (iTempNode < numberOfNodesToShow){
+                        // console.log('In if sumInOut[i][0] =', sumInOut[i][0]);
+                        tempParsedJson.nodes[sumInOut[i][0]]["color"] = "#146EB4";
                         iTempNode = iTempNode + 1;
                     }
-                else if(sumInOut[i] >= cutOffValue && iTempNode >= numberOfNodesToShow){
-                        tempParsedJson.nodes[i]["color"] = "#C0C0C0";
-                }
                 else {
-                    tempParsedJson.nodes[i]["color"] = "#C0C0C0";
+                    // console.log('In else sumInOut[i][0] =', sumInOut[i][0]);
+                    tempParsedJson.nodes[sumInOut[i][0]]["color"] = "#C0C0C0";
                 }
             }
 
