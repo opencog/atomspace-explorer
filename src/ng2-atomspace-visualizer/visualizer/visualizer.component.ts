@@ -91,6 +91,9 @@ let reheatFactor = 1;
 let widthView = 0;
 let heightView = 0;
 let filterMenuInitialized = false;
+let salientProcessingColor = {};
+let salientProcessingLinkNames = {};
+let previousNumberOfAtoms = 0;
 
 /*
  * IE Detection utility function
@@ -127,6 +130,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
   @Input() unordered_linktypes: string[];
   @Input() custom_style: string;
   @Input() language: string;
+  @Input() numAtoms: number;
 
   // Other Class members
   public isInitialLoad = true;
@@ -178,16 +182,23 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
    * Constructor
    */
   constructor(public visualizerService: VisualizerService, public atomService: AtomService, public _translate: TranslateService) {
+    console.log('Constructor called');
     this.atomService.editItem
       .subscribe(res => {
         const as_data: AtomServiceData = res;
 
         // Incoming data: Atoms
         const atoms: any = as_data.atoms ? as_data.atoms : null;
+
         if (atoms !== null && atoms.result.atoms.length > 0) {
-          this.atoms = as_data.atoms;
-          // console.log('VisualizerComponent atoms=' + as_data.atoms);
+              this.atoms = as_data.atoms;
+              console.log('VisualizerComponent atoms=' + as_data.atoms);
+              console.log('atoms.result.atoms.length =',atoms.result.atoms.length);
         }
+
+        // Incoming data: numAtoms
+        // const numAtoms: any = as_data.numAtoms ? as_data.numAtoms : 0;
+        this.numAtoms = as_data.numAtoms;
 
         // Incoming data: Unordered Link Types
         const uolinktypes: any = as_data.unordered_linktypes ? as_data.unordered_linktypes : null;
@@ -256,12 +267,124 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     }
   }
 
+   // Function to extract salient features of an atomspace based on incoming/outgoing number of links
+   salientIncomingOutgoingLinks() {
+
+        const numberOfNodesToShow = 20;
+        var sumInOut = new Array();
+        var sum = 0;
+
+        if (this.atoms) {
+            var tempParsedJson = this.parsedJson;
+            console.log('tempParsedJson\n', tempParsedJson);
+            console.log(tempParsedJson.nodes);
+            console.log(tempParsedJson.nodes.length);
+            console.log(tempParsedJson.links);
+            console.log(tempParsedJson.links.length);
+            console.log(typeof tempParsedJson.nodes);
+            console.log(typeof tempParsedJson.links);
+
+            // Save color of nodes/links for later
+            // let tempParsedJson2 = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+            console.log('this.parsedJson\n', this.parsedJson);
+
+            for (let i = 0; i < this.parsedJson.nodes.length; i++) {
+                salientProcessingColor[this.parsedJson.nodes[i]["id"]]=this.parsedJson.nodes[i]["color"];
+            }
+
+            // console.log('salientProcessingColor\n',salientProcessingColor);
+
+            // Sort nodes by number of incoming + outgoing
+
+            for (let i = 0; i < tempParsedJson.nodes.length; i++) {
+                sum = tempParsedJson.nodes[i].incoming.length + tempParsedJson.nodes[i].outgoing.length;
+                sumInOut[i] = [i,sum];
+            }
+            sumInOut.sort((first,second) => {return second[1]-first[1]});
+            // console.log('SumInOut\n',sumInOut)
+
+            let iTempNode = 0;
+            for (let i = 0; i < sumInOut.length; i++) {
+
+                if(tempParsedJson.nodes[sumInOut[i][0]]["type"] == "TimeNode" || tempParsedJson.nodes[sumInOut[i][0]]["type"] == "NumberNode") {
+                    // console.log('In first if');
+                    tempParsedJson.nodes[sumInOut[i][0]]["color"] = "#C0C0C0";
+                    continue;
+                }
+
+                if (iTempNode < numberOfNodesToShow){
+                        // console.log('In if sumInOut[i][0] =', sumInOut[i][0]);
+                        tempParsedJson.nodes[sumInOut[i][0]]["color"] = "#146EB4";
+                        iTempNode = iTempNode + 1;
+                    }
+                else {
+                    // console.log('In else sumInOut[i][0] =', sumInOut[i][0]);
+                    tempParsedJson.nodes[sumInOut[i][0]]["color"] = "#C0C0C0";
+                }
+            }
+
+
+            // Save name of links for later
+
+            console.log('tempParsedJson.links\n',tempParsedJson.links);
+
+            for (let i = 0; i < this.parsedJson.links.length; i++) {
+                salientProcessingLinkNames[this.parsedJson.links[i]['index']]=this.parsedJson.links[i]['name'];
+            }
+
+            console.log('salientProcessingLinkNames\n',salientProcessingLinkNames);
+
+            //  Empty name field of links
+
+            for (let i = 0; i < tempParsedJson.links.length; i++) {
+
+                 tempParsedJson.links[i]['name'] = '';
+
+            }
+
+
+            return tempParsedJson;
+        }
+   }
+
+   // Function to preprocess atoms that are returned from calling visualizerService
+   preprocessAtoms() {
+
+   //Replace instances of back with null string for now till fix is done on opencog code
+      for (let i = 0; i < this.atoms.result.atoms.length; i++) {
+            this.atoms.result.atoms[i]["name"] = this.atoms.result.atoms[i]["name"].replace(/back-/ig,"");
+            this.atoms.result.atoms[i]["name"] = this.atoms.result.atoms[i]["name"].replace(/back/ig,"");
+            this.atoms.result.atoms[i]["type"] = this.atoms.result.atoms[i]["type"].replace(/back-/ig,"");
+            this.atoms.result.atoms[i]["type"] = this.atoms.result.atoms[i]["type"].replace(/back/ig,"");
+      }
+
+
+   }
+
+   // Function to replace some links with symbols
+   replaceLinkNames() {
+
+   //Replace link names
+   /*   for (let i = 0; i < this.atoms.result.atoms.length; i++) {
+            this.atoms.result.atoms[i]["name"] = this.atoms.result.atoms[i]["name"].replace(/back-/ig,"");
+            this.atoms.result.atoms[i]["name"] = this.atoms.result.atoms[i]["name"].replace(/back/ig,"");
+            this.atoms.result.atoms[i]["type"] = this.atoms.result.atoms[i]["type"].replace(/back-/ig,"");
+            this.atoms.result.atoms[i]["type"] = this.atoms.result.atoms[i]["type"].replace(/back/ig,"");
+      }*/
+
+
+   }
+
   /*
    * Post-Init
    */
   ngAfterViewInit() {
     if (this.atoms) {
+
+      this.preprocessAtoms();
+
       this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
+      // this.parsedJson = this.salientIncomingOutgoingLinks();
       if (this.atoms.result.atoms.length) {
         let resultStr = 'Loaded ' + this.atoms.result.atoms.length + ' atoms';
         if (typeof this.atoms.result.complete !== 'undefined') { resultStr += ', complete=' + this.atoms.result.complete; }
@@ -272,7 +395,55 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
       this.draw_graph();
       isSimulationRunning = true;
       this.isInitialLoad = false;
+
+      this.parsedJson = this.salientIncomingOutgoingLinks();
+
+      // Calling draw_graph twice (along with setting flags, etc) might be a less than ideal hack.
+      // Redrawing simulation in draw_graph might be a good solution.
+      this.draw_graph();
+      isSimulationRunning = true;
+      this.isInitialLoad = false;
+      // Calling draw_graph twice ends
+
     }
+
+    setInterval(() => {
+	    this.update();
+	}, 3000);
+	console.log('setInterval called from visualizer component');
+
+  }
+
+   update() {
+
+        try {
+
+                    if(previousNumberOfAtoms != this.atoms.result.atoms.length){
+                        previousNumberOfAtoms = this.atoms.result.atoms.length;
+                        this.ngAfterViewInit();
+                    }
+
+            }
+            catch (error) {
+                console.log(error);
+            }
+
+
+            if (this.numAtoms == 0 && previousNumberOfAtoms !=0){
+
+                  previousNumberOfAtoms = 0;
+                  this.parsedJson = this.visualizerService.getParsedJson([]);
+
+                  this.draw_graph();
+                  isSimulationRunning = true;
+                  this.isInitialLoad = false;
+
+                  console.log('In if (this.numAtoms == 0 && previousNumberOfAtoms !=0)');
+
+            }
+
+
+
   }
 
   /*
@@ -387,6 +558,14 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     // Draw graph
     this.draw_graph();
     isSimulationRunning = true;
+
+    this.parsedJson = this.salientIncomingOutgoingLinks();
+
+    // Calling draw_graph twice (along with setting flags, etc) might be a less than ideal hack.
+    // Redrawing simulation in draw_graph might be a good solution.
+    this.draw_graph();
+    isSimulationRunning = true;
+    // Calling draw_graph twice ends
   }
 
   /*
@@ -599,6 +778,8 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
 
     if (isSimulationRunning) { simulation.stop(); }
 
+    this.preprocessAtoms();
+
     // Get Data
     this.parsedJson = this.visualizerService.getParsedJson(this.atoms.result.atoms);
     // console.log(this.parsedJson);
@@ -608,6 +789,18 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     filterMenuInitialized = false;
 
     this.draw_graph();
+
+    this.parsedJson = this.salientIncomingOutgoingLinks();
+
+    // Calling draw_graph twice (along with setting flags, etc) might be a less than ideal hack.
+    // Redrawing simulation in draw_graph might be a good solution.
+    this.closeSelectedNodeProps();
+    this.isDrilledNodes = false;
+    filterMenuInitialized = false;
+
+    this.draw_graph();
+    // Calling draw_graph twice ends
+
 
     if (isSimulationRunning) { simulation.restart(); }
   }
@@ -725,6 +918,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
     // Set up Force Simulation
     const defaultAlphaDecay = 1 - Math.pow(0.001, 1 / 300);  // ~0.0228.
     const alphaDecay = this.atoms.result.atoms.length < 50 ? 0.008 : defaultAlphaDecay;
+
     if (simulation) { simulation.stop(); }  // Make sure simulation is stopped, else get nodes "explosion" effect.
     simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id(function (d) { return d.id; }).distance(100))  // .strength(1))
@@ -809,12 +1003,12 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
       .style('stroke-width', strokeWidthLink)
       .style('stroke-linecap', 'round')
       .attr('marker-end', 'url(#markerEnd)')  // Arrow to show incoming direction.
-      .attr('marker-start', function(d) {  // Also add outgoing arrow for unordered (symmetric links)
+      /*.attr('marker-start', function(d) {  // Also add outgoing arrow for unordered (symmetric links)
         for (let i = 0; __this.unordered_linktypes && i < __this.unordered_linktypes.length; i++) {
           if (d.name === __this.unordered_linktypes[i]) { return 'url(#markerStart)'; }
         }
         return '';
-      });
+      })*/;
       /* Mouseover/out over link lines no longer works after converting from lines to paths (including arcs). Was hard
        * for users to trigger over the narrow link lines anyway, so just leaving link labels as the mouseover target
       .on('mouseover', (d) => linkMouseOver.call(this, d))
@@ -959,6 +1153,7 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
       .style('fill', '#fff')  // Text color inside nodes.
       .style('opacity', opacityNodeLabel);
 
+
     // Setup Node and D3 client area handlers
     this.node.on('click', (d) => nodeSingleClick.call(this, d));
     this.node.on('dblclick', (d) => nodeDoubleClick.call(this, d));
@@ -985,7 +1180,8 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
      */
     simulation
       .nodes(this.parsedJson.nodes)
-      .on('tick', () => graphTick.call(this));
+      // .on('tick', () => graphTick.call(this));
+      .stop();
 
     // Simulation Links
     simulation.force('link')
@@ -1004,6 +1200,16 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
       }
     });
     // console.log(linkedByOutgoing);
+    for (var i = 0; i < 300; ++i) {
+        simulation.tick();
+    }
+
+    graphTick.call(this)
+
+    // This will enable the nodes to be draggable once the graph is drawn without running simulation the first time
+    simulation.on('tick', () => graphTick.call(this));
+    simulation.restart();
+
 
     /*
      * Node Drag implementation
@@ -1278,6 +1484,16 @@ export class VisualizerComponent implements AfterViewInit, OnInit, OnDestroy, On
      */
     function nodeDoubleClick(d) {
       // console.log('Doubleclick: ', d);
+
+      // Apply previously saved attributes like color, link names
+
+      for (let i = 0; i < this.parsedJson.nodes.length; i++) {
+        this.parsedJson.nodes[i]["color"] = salientProcessingColor[i];
+      }
+
+      for (let i = 0; i < this.parsedJson.links.length; i++) {
+        this.parsedJson.links[i]["name"] = salientProcessingLinkNames[i];
+      }
 
       this.isDrilledNodes = true;
       this.selectedNodeData = d;
