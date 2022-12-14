@@ -10,13 +10,13 @@ AtomSpace, then displayed as a two dimensional graph in the browser.
 
 ## Prerequisites and Issues
 The AtomSpace Explorer needs ... an AtomSpace to explore. This is
-provided by the [CogServer](https://github.com/opencog/cogserver)
+provided by the [CogServer](https://github.com/opencog/cogserver).
 
 There's only one problem: The code in this repo uses an obsolete
 JSON API that no longer exists.  It needs to be replaced by the API
-demoed in
-[AtomSpace TypeScript](https://github.com/opencog/atomspace-typescript).
-This shouldn't be hard, but someone needs to do it.
+demoed in the
+[AtomSpace TypeScript](https://github.com/opencog/atomspace-typescript)
+git repo.  This shouldn't be hard, but someone needs to do it.
 
 
 ## Install and Setup
@@ -43,15 +43,15 @@ Alternatively, you can permanently change the default port by inserting the foll
 1. Navigate to [http://localhost:4200/](http://localhost:4200/)
 1. Click on Fetch in the Navbar. A 'Fetch AtomSpace Results' prompt
    is displayed. Then do any of the following options:
-   - Fetch from CogServer:  Enter a valid CogServer URL __*__ in the
-     Server URL box.
-    *e.g.* <http://localhost:18080> or <http://my_cogserver:18080> __*__,
+   - Fetch from CogServer:  Enter a valid CogServer URL in the
+     App URL box.
+     *e.g.* <ws://localhost:18080/json> or <ws://my_cogserver:18080/json>,
      then click on the Fetch button to graph the data.
    - Load built-in sample data:  Click on 'Load Sample Data'. See next
      section regarding configuring sample data.
    - Load non-default built-in sample data: Enter the path, in the form
      of 'assets/{file-name}' to any of the bundled sample data json files
-     in the Server URL box. I.E. 'assets/atoms.humans.json' (enter it
+     in the App URL box. I.E. 'assets/atoms.humans.json' (enter it
      without quotes). Then click on the Fetch button.
 
     __\* Note: Do not append '/api/v1.1/atoms', as was required for
@@ -64,7 +64,8 @@ Alternatively, you can permanently change the default port by inserting the foll
   `sample\_data\_file` in `./src/app/app.config.ts`. Then recompile
   `(ng serve)`.
 - Provided sample files (these all use the now-obsolete json file
-  format, these need to be converted to Atomese.)
+  format, these need to be converted to either the new-style JSON
+  or to Atomese.)
   - `atoms.sample1.json`: Original built-in sample.
   - `atoms.sample1a.json`: Same as previous, with some non-zero STI values.
   - `atoms.sample1b.json`: Same as previous, plus two additional
